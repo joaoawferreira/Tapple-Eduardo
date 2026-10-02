@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a12">
+  <meta name="description" content="Reúna a turma e pense rápido! Um jogo de palavras para 2 a 6 jogadores, com 40 categorias, letras e uma corrida contra o tempo.">
+  <title>Letra Rápida — Pense rápido. Jogue junto.</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/animations.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+  <script type="module" src="./dist/main.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#" id="brand-home" aria-label="Letra Rápida — voltar ao menu"><img class="brand-icon" src="./assets/icons/favicon.svg" alt="" width="36" height="36"> letra<span>rápida</span><span class="brand-dot">.</span></a>
+    <nav aria-label="Controles gerais">
+      <button class="icon-button" id="help-button" aria-label="Como jogar" title="Como jogar">?</button>
+      <button class="icon-button" id="sound-button" aria-label="Desligar sons" title="Sons" aria-pressed="true">♪</button>
+      <button class="icon-button" id="fullscreen-button" aria-label="Ativar tela cheia" title="Tela cheia">⛶</button>
+    </nav>
+  </header>
+  <main>
+    <section id="menu-screen" class="screen menu-screen" aria-labelledby="menu-title">
+      <div class="eyebrow"><span class="tiny-spark">✦</span> O JOGO DE PALAVRAS DA TURMA</div>
+      <div class="menu-title-wrap">
+        <span class="floating-letter letter-one" aria-hidden="true">A</span>
+        <h1 id="menu-title">letra<br><span>rápida</span><span class="title-dot">.</span></h1>
+        <span class="floating-letter letter-two" aria-hidden="true">R</span>
+        <span class="floating-letter letter-three" aria-hidden="true">Z</span>
+      </div>
+      <p class="menu-subtitle">Pense rápido. Escolha uma letra.<br>Não deixe o tempo acabar.</p>
+      <div class="menu-actions">
+        <button id="play-button" class="button primary big"><span aria-hidden="true">✦</span> JOGAR</button>
+        <div class="secondary-actions"><button class="button secondary" id="menu-help">Como jogar</button><button class="button secondary" id="settings-button">Configurações</button></div>
+      </div>
+      <div class="game-facts"><span><b>2–6</b> jogadores</span><span><b>40</b> categorias</span><span><b>∞</b> boas respostas</span></div>
+      <p class="menu-note">Uma tela. Toda a turma. Quem pensa mais rápido?</p>
+    </section>
+
+    <section id="setup-screen" class="screen narrow" aria-labelledby="setup-title" hidden>
+      <button class="text-button back-button" id="setup-back">Voltar ao menu</button>
+      <div class="eyebrow">PREPARE A TURMA</div>
+      <h1 id="setup-title">Quem vai <span class="accent">jogar?</span></h1>
+      <p class="muted">Escolham os nomes, acertem o ritmo e vamos nessa.</p>
+      <form id="setup-form" class="setup-card">
+        <fieldset><legend>Quantidade de jogadores</legend>
+          <div id="player-count" class="choice-group" aria-label="Quantidade de jogadores">
+            <button type="button" data-count="2" aria-pressed="true">2</button><button type="button" data-count="3" aria-pressed="false">3</button><button type="button" data-count="4" aria-pressed="false">4</button><button type="button" data-count="5" aria-pressed="false">5</button><button type="button" data-count="6" aria-pressed="false">6</button>
+          </div>
+        </fieldset>
+        <div id="player-fields" class="player-fields"></div>
+        <div class="settings-grid">
+          <label>Tempo por jogador<select id="turn-time"><option value="5">5 segundos · intenso</option><option value="10">10 segundos · clássico</option><option value="15">15 segundos</option><option value="20">20 segundos</option><option value="30">30 segundos · tranquilo</option></select></label>
+          <label>Quantidade de rodadas<select id="round-count"><option value="3">3 rodadas</option><option value="5">5 rodadas</option><option value="10">10 rodadas</option><option value="0">Ilimitado</option></select></label>
+        </div>
+        <div class="inline-tip"><span aria-hidden="true">✦</span><p>Fale a palavra em voz alta e toque na inicial. A turma decide se a resposta vale!</p></div>
+        <p id="setup-error" class="error-message" role="alert"></p>
+        <button class="button primary full" type="submit">INICIAR PARTIDA</button>
+      </form>
+    </section>
+
+    <section id="game-screen" class="screen game-screen" aria-label="Partida" hidden>
+      <div class="game-topbar"><span id="round-label" class="pill">RODADA 1 DE 5</span><span class="live-label">VALENDO!</span><button id="pause-button" class="button secondary small" aria-label="Pausar partida">Ⅱ <span>Pausar</span></button></div>
+      <div class="game-layout">
+        <aside class="score-panel"><div class="panel-heading"><h2>Na disputa</h2><span>PTS</span></div><ol id="live-score" class="score-list"></ol><p class="score-note">Respondeu a tempo?<br>Continue na disputa.</p></aside>
+        <div class="play-area">
+          <div class="eyebrow">A CATEGORIA É</div>
+          <h1 id="category-title" class="category-title"></h1>
+          <p id="turn-label" class="turn-label" aria-live="polite"></p>
+          <div id="timer" class="timer" role="timer" aria-label="Tempo restante">
+            <svg class="timer-svg" viewBox="0 0 160 160" aria-hidden="true"><circle class="timer-track" cx="80" cy="80" r="70"/><circle id="timer-progress" class="timer-progress" cx="80" cy="80" r="70" pathLength="100"/></svg>
+            <div><strong id="timer-number">10</strong><span>SEGUNDOS</span></div>
+          </div>
+          <div class="letters-heading"><span>FALE A PALAVRA. ESCOLHA A INICIAL.</span><span><b id="letters-remaining">26</b> disponíveis</span></div>
+          <div id="letter-board" class="letter-board" role="group" aria-label="Letras do alfabeto"></div>
+          <p class="keyboard-hint"><kbd>A</kbd> – <kbd>Z</kbd> para escolher <span>·</span> <kbd>espaço</kbd> para pausar</p>
+        </div>
+        <aside class="history-panel"><div class="panel-heading"><h2>Últimas jogadas</h2><span aria-hidden="true">↺</span></div><ol id="move-history" class="history-list"></ol><p class="history-tip">Cada letra só vale uma vez por rodada. Capriche na próxima!</p></aside>
+      </div>
+    </section>
+
+    <section id="round-screen" class="screen narrow result-screen" aria-labelledby="round-end-title" hidden>
+      <div class="result-symbol" aria-hidden="true">⌛</div><div class="eyebrow" id="round-end-label">FIM DA RODADA</div>
+      <h1 id="round-end-title">O tempo acabou!</h1><p id="round-result-message" class="result-description"></p>
+      <div class="results-card"><div class="panel-heading"><h2>Placar da turma</h2><span>PONTOS</span></div><ol id="round-score" class="score-list"></ol></div>
+      <p id="next-category" class="next-category">Próxima categoria <strong>???</strong></p>
+      <button id="next-round-button" class="button primary full">PRÓXIMA RODADA</button>
+      <button id="finish-unlimited" class="text-button" hidden>Encerrar partida e ver resultado</button>
+    </section>
+
+    <section id="end-screen" class="screen narrow result-screen" aria-labelledby="end-title" hidden>
+      <div class="result-symbol trophy" aria-hidden="true">🏆</div><div class="eyebrow">FIM DE JOGO · TURMA, TEMOS UM RESULTADO!</div>
+      <p id="winner-label" class="winner-label">VENCEDOR</p><h1 id="end-title" class="accent"></h1><p id="winner-description" class="muted"></p>
+      <div class="results-card"><div class="panel-heading"><h2>Placar final</h2><span>PONTOS</span></div><ol id="final-score" class="score-list"></ol></div>
+      <button id="replay-button" class="button primary full">JOGAR NOVAMENTE</button>
+      <div class="secondary-actions"><button id="new-game-button" class="button secondary">Nova partida</button><button id="end-menu-button" class="button secondary">Voltar ao menu</button></div>
+    </section>
+  </main>
+  <footer class="site-footer"><span>FEITO PARA JOGAR JUNTO.</span><span>Uma letra pode mudar tudo <span class="accent">✦</span></span></footer>
+  <div id="status-message" class="toast" role="status"></div>
+
+  <dialog id="help-dialog" aria-labelledby="help-title">
+    <div class="dialog-heading"><span class="eyebrow">RÁPIDO DE APRENDER</span><button class="icon-button" data-close="help-dialog" aria-label="Fechar instruções">×</button></div>
+    <h2 id="help-title">Como jogar</h2>
+    <ol class="rules-list">
+      <li>Uma categoria é sorteada no início da rodada.</li><li>O jogador destacado começa.</li><li>Fale uma palavra da categoria em voz alta.</li><li>Toque ou digite a letra inicial da palavra.</li><li>A letra fica bloqueada até a próxima rodada.</li><li>A vez passa para o próximo jogador, que usa outra letra.</li><li>Responda antes que o cronômetro chegue a zero.</li><li>Se o tempo acabar, a rodada termina e os demais ganham 1 ponto. Se usarem as 26 letras, todos ganham 1 ponto.</li><li>Ao final, quem tiver mais pontos vence. Empates são compartilhados!</li>
+    </ol>
+    <p class="inline-tip">As respostas são validadas pela turma. Não é necessário microfone.</p>
+    <p class="muted">Espaço pausa ou continua. Esc abre a pausa. Ao mudar de aba, a partida pausa automaticamente.</p>
+    <button class="button primary full" data-close="help-dialog">ENTENDI, VAMOS JOGAR</button>
+  </dialog>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-heading"><span class="eyebrow">DO SEU JEITO</span><button class="icon-button" data-close="settings-dialog" aria-label="Fechar configurações">×</button></div>
+    <h2 id="settings-title">Configurações</h2>
+    <label class="toggle-row" for="sound-toggle"><span>Efeitos sonoros<small>Cliques, alertas e comemorações</small></span><input id="sound-toggle" type="checkbox" role="switch"></label>
+    <label class="volume-label" for="volume">Volume <output id="volume-output">35%</output></label><input id="volume" type="range" min="0" max="100" step="5">
+    <p class="muted">O tempo e as rodadas são definidos ao preparar a partida. Suas preferências ficam salvas neste navegador.</p>
+    <button class="button primary full" data-close="settings-dialog">PRONTO</button>
+  </dialog>
+
+  <dialog id="pause-dialog" aria-labelledby="pause-title">
+    <div class="eyebrow">PODE RESPIRAR</div><h2 id="pause-title">Jogo pausado.</h2><p class="muted">A próxima palavra pode esperar um pouquinho.</p>
+    <div class="dialog-actions"><button id="resume-button" class="button primary">CONTINUAR</button><button id="restart-round-button" class="button secondary">Reiniciar rodada</button><button id="pause-menu-button" class="text-button">Voltar ao menu</button></div>
+  </dialog>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="eyebrow">ANTES DE CONTINUAR</div><h2 id="confirm-title">Abandonar a partida?</h2><p id="confirm-description" class="muted">O placar desta partida será perdido. Os nomes e as configurações continuarão salvos.</p>
+    <div class="dialog-actions"><button id="confirm-cancel" class="button primary">Continuar aqui</button><button id="confirm-accept" class="button secondary">Sim, voltar ao menu</button></div>
+  </dialog>
+  <noscript><p class="noscript">Ative o JavaScript no navegador para jogar Letra Rápida.</p></noscript>
+</body>
+</html>

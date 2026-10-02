@@ -1,0 +1,17 @@
+{
+  "name": "letra-rapida",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Jogo local de palavras para 2 a 6 pessoas, sem frameworks.",
+  "scripts": {
+    "build": "tsc && node scripts/build.mjs",
+    "check": "tsc --noEmit",
+    "start": "node scripts/serve.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "docs": "node scripts/source-doc.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
