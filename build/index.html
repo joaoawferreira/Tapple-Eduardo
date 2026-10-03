@@ -32,7 +32,7 @@
       </div>
       <p class="menu-subtitle">Pense rápido. Escolha uma letra.<br>Não deixe o tempo acabar.</p>
       <div class="menu-actions">
-        <button id="play-button" class="button primary big"><span aria-hidden="true">✦</span> JOGAR</button>
+        <button id="online-open" class="button primary big">JOGAR ONLINE</button><button id="play-button" class="button secondary big">JOGAR PRESENCIALMENTE</button>
         <div class="secondary-actions"><button class="button secondary" id="menu-help">Como jogar</button><button class="button secondary" id="settings-button">Configurações</button></div>
       </div>
       <div class="game-facts"><span><b>2–6</b> jogadores</span><span><b>40</b> categorias</span><span><b>∞</b> boas respostas</span></div>
@@ -97,6 +97,49 @@
       <button id="replay-button" class="button primary full">JOGAR NOVAMENTE</button>
       <div class="secondary-actions"><button id="new-game-button" class="button secondary">Nova partida</button><button id="end-menu-button" class="button secondary">Voltar ao menu</button></div>
     </section>
+
+    <section id="online-screen" class="screen online-screen" aria-label="Sala online" hidden>
+      <div class="online-toolbar">
+        <div><span class="eyebrow">SALA ONLINE</span><strong id="online-code"></strong></div>
+        <span id="online-connection" role="status">Conectando…</span>
+        <button id="online-leave" class="button secondary small">Sair da sala</button>
+      </div>
+      <p class="online-call-note">Conversem por uma chamada de voz. Falem a palavra e toquem na inicial aqui no jogo.</p>
+      <div id="online-lobby" class="online-lobby">
+        <div class="eyebrow">REÚNA A TURMA</div><h1>Todo mundo <span class="accent">pronto?</span></h1>
+        <p class="muted">Compartilhe o convite. Cada pessoa entra pelo próprio aparelho.</p>
+        <div class="invite-row"><input id="online-invite" readonly aria-label="Link de convite"><button id="online-copy" class="button secondary">Copiar convite</button></div>
+        <p id="online-settings-summary" class="muted"></p>
+        <div id="online-lobby-players" class="online-players"></div>
+        <div class="online-lobby-actions"><button id="online-ready" class="button secondary" aria-pressed="false">ESTOU PRONTO</button><button id="online-start" class="button primary">INICIAR PARTIDA</button></div>
+        <p id="online-lobby-hint" class="muted" aria-live="polite"></p>
+      </div>
+      <div id="online-match" hidden>
+        <div class="online-match-top"><span id="online-round" class="pill"></span><button id="online-pause" class="button secondary small">Ⅱ Pausar para todos</button></div>
+        <div class="online-match-layout">
+          <aside><div class="panel-heading"><h2>Na disputa</h2><span>PTS</span></div><ol id="online-score" class="score-list"></ol></aside>
+          <div class="play-area">
+            <div class="eyebrow">A CATEGORIA É</div><h1 id="online-category" class="category-title"></h1><p id="online-turn" class="turn-label" aria-live="polite"></p>
+            <div id="online-timer" class="timer" role="timer" aria-label="Tempo restante"><svg class="timer-svg" viewBox="0 0 160 160" aria-hidden="true"><circle class="timer-track" cx="80" cy="80" r="70"/><circle id="online-progress" class="timer-progress" cx="80" cy="80" r="70" pathLength="100"/></svg><div><strong id="online-seconds">15</strong><span>SEGUNDOS</span></div></div>
+            <div id="online-paused" class="inline-tip" hidden><div><strong>Partida pausada para todos.</strong><p id="online-pause-hint"></p><div class="secondary-actions"><button id="online-resume" class="button primary">CONTINUAR</button><button id="online-restart" class="button secondary">Reiniciar rodada</button></div></div></div>
+            <div class="letters-heading"><span>FALE A PALAVRA. ESCOLHA A INICIAL.</span><span><b id="online-remaining">26</b> disponíveis</span></div>
+            <div id="online-board" class="letter-board" role="group" aria-label="Letras da sala online"></div>
+            <p id="online-turn-hint" class="online-turn-hint"></p>
+          </div>
+          <aside class="online-history"><div class="panel-heading"><h2>Últimas jogadas</h2></div><ol id="online-history" class="history-list"></ol></aside>
+        </div>
+      </div>
+      <div id="online-results" class="narrow result-screen" hidden>
+        <div class="result-symbol" aria-hidden="true">✦</div><div id="online-result-eyebrow" class="eyebrow"></div><h1 id="online-result-title"></h1><p id="online-result-message" class="muted"></p>
+        <div class="results-card"><ol id="online-result-score" class="score-list"></ol></div>
+        <button id="online-next" class="button primary full">PRÓXIMA RODADA</button>
+        <button id="online-finish" class="text-button">Encerrar partida</button>
+        <button id="online-replay" class="button primary full">JOGAR NOVAMENTE</button>
+        <p id="online-result-hint" class="muted"></p>
+      </div>
+      <p id="online-error" class="error-message" role="alert"></p>
+    </section>
+
   </main>
   <footer class="site-footer"><span>FEITO PARA JOGAR JUNTO.</span><span>Uma letra pode mudar tudo <span class="accent">✦</span></span></footer>
   <div id="status-message" class="toast" role="status"></div>
@@ -130,6 +173,29 @@
     <div class="eyebrow">ANTES DE CONTINUAR</div><h2 id="confirm-title">Abandonar a partida?</h2><p id="confirm-description" class="muted">O placar desta partida será perdido. Os nomes e as configurações continuarão salvos.</p>
     <div class="dialog-actions"><button id="confirm-cancel" class="button primary">Continuar aqui</button><button id="confirm-accept" class="button secondary">Sim, voltar ao menu</button></div>
   </dialog>
+
+  <dialog id="online-dialog" aria-labelledby="online-dialog-title">
+    <div class="dialog-heading"><span class="eyebrow">CADA UM NA SUA TELA</span><button id="online-dialog-close" class="icon-button" aria-label="Fechar">×</button></div>
+    <h2 id="online-dialog-title">Jogar à distância</h2>
+    <div class="choice-group online-tabs"><button id="online-create-tab" type="button" aria-pressed="true">Criar sala</button><button id="online-join-tab" type="button" aria-pressed="false">Entrar com código</button></div>
+    <form id="online-form">
+      <label class="online-field">Seu apelido<input id="online-name" maxlength="24" required autocomplete="nickname" placeholder="Como a turma te chama?"></label>
+      <label id="online-code-field" class="online-field" hidden>Código da sala<input id="online-join-code" maxlength="6" minlength="6" autocomplete="off" spellcheck="false" placeholder="Ex.: FLOR72"></label>
+      <div id="online-create-settings" class="settings-grid">
+        <label>Tempo por jogador<select id="online-time"><option value="5">5 segundos</option><option value="10">10 segundos</option><option value="15" selected>15 segundos</option><option value="20">20 segundos</option><option value="30">30 segundos</option></select></label>
+        <label>Rodadas<select id="online-rounds"><option value="3">3 rodadas</option><option value="5" selected>5 rodadas</option><option value="10">10 rodadas</option><option value="0">Ilimitado</option></select></label>
+      </div>
+      <p class="inline-tip">De 2 a 6 pessoas. As respostas são faladas na chamada que vocês preferirem.</p>
+      <p id="online-form-error" class="error-message" role="alert"></p>
+      <button id="online-submit" class="button primary full" type="submit">CRIAR SALA</button>
+    </form>
+    <button id="online-return" class="button secondary full" hidden>Retomar minha sala</button>
+  </dialog>
+  <dialog id="online-confirm" aria-labelledby="online-confirm-title">
+    <div class="eyebrow">ANTES DE CONTINUAR</div><h2 id="online-confirm-title"></h2><p id="online-confirm-description" class="muted"></p>
+    <div class="dialog-actions"><button id="online-confirm-cancel" class="button primary">Cancelar</button><button id="online-confirm-accept" class="button secondary">Confirmar</button></div>
+  </dialog>
+
   <noscript><p class="noscript">Ative o JavaScript no navegador para jogar Letra Rápida.</p></noscript>
 </body>
 </html>

@@ -1,3 +1,4 @@
+import { OnlineGame } from "./OnlineGame.js";
 import { Game } from "./Game.js";
 import { ALPHABET } from "./LetterManager.js";
 import { SoundManager } from "./SoundManager.js";
@@ -248,9 +249,13 @@ for (const letter of ALPHABET) {
     button.addEventListener("animationend", () => button.classList.remove("just-used"));
     element("letter-board").append(button);
 }
+const online = new OnlineGame(sound, () => { closeAllDialogs(); game.menu(); });
 element("play-button").addEventListener("click", () => game.setup());
 element("setup-back").addEventListener("click", () => { collectNames(); save(); game.menu(); });
-element("brand-home").addEventListener("click", event => { event.preventDefault(); requestMenu(); });
+element("brand-home").addEventListener("click", event => { event.preventDefault(); if (online.active)
+    online.requestExit();
+else
+    requestMenu(); });
 element("help-button").addEventListener("click", showHelp);
 element("menu-help").addEventListener("click", showHelp);
 element("settings-button").addEventListener("click", () => openDialog(dialogs.settings));

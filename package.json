@@ -1,17 +1,20 @@
 {
-  "name": "letra-rapida",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "description": "Jogo local de palavras para 2 a 6 pessoas, sem frameworks.",
-  "scripts": {
-    "build": "tsc && node scripts/build.mjs",
-    "check": "tsc --noEmit",
-    "start": "node scripts/serve.mjs",
-    "test": "npm run build && node --test tests/*.test.mjs",
-    "docs": "node scripts/source-doc.mjs"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  }
+    "name":  "letra-rapida",
+    "version":  "1.0.0",
+    "private":  true,
+    "type":  "module",
+    "description":  "Jogo local de palavras para 2 a 6 pessoas, sem frameworks.",
+    "scripts":  {
+                    "build":  "tsc \u0026\u0026 node scripts/build.mjs \u0026\u0026 tsc -p tsconfig.server.json",
+                    "check":  "tsc --noEmit \u0026\u0026 tsc -p tsconfig.server.json",
+                    "start":  "node scripts/serve.mjs",
+                    "test":  "npm run build \u0026\u0026 node --test tests/*.test.mjs",
+                    "docs":  "node scripts/source-doc.mjs"
+                },
+    "devDependencies":  {
+                            "drizzle-kit":  "^0.31.11",
+                            "drizzle-orm":  "^0.45.3",
+                            "esbuild":  "^0.28.2",
+                            "typescript":  "^5.9.3"
+                        }
 }

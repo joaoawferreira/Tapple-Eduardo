@@ -1,17 +1,24 @@
 import { createServer } from "node:http";
-import { readFile, stat } from "node:fs/promises";
-import { resolve, extname, sep } from "node:path";
-const root = resolve("build");
-const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".svg": "image/svg+xml", ".mp3": "audio/mpeg", ".wav": "audio/wav" };
-const server = createServer(async (request, response) => {
+import worker from "../dist/server/index.js";
+import { openLocalDatabase } from "./local-database.mjs";
+const database = await openLocalDatabase(process.env.LETRA_TEST_DATABASE ?? ".sites-runtime/rooms.sqlite");
+const port = Number(process.env.PORT ?? 4173);
+const server = createServer(async (incoming, outgoing) => {
   try {
-    const pathname = decodeURIComponent(new URL(request.url ?? "/", "http://localhost").pathname);
-    let file = resolve(root, "." + pathname);
-    if (file !== root && !file.startsWith(root + sep)) { response.writeHead(403).end(); return; }
-    if ((await stat(file)).isDirectory()) file = resolve(file, "index.html");
-    response.writeHead(200, { "Content-Type": types[extname(file)] ?? "application/octet-stream", "Cache-Control": "no-store" });
-    response.end(await readFile(file));
-  } catch { response.writeHead(404).end("Arquivo não encontrado. Execute npm run build."); }
+    const chunks = [];
+    let size = 0;
+    for await (const chunk of incoming) {
+      size += chunk.length;
+      if (size > 4096) { outgoing.writeHead(413).end(); return; }
+      chunks.push(chunk);
+    }
+    const url = new URL(incoming.url ?? "/", `http://${incoming.headers.host ?? "127.0.0.1:" + port}`);
+    const request = new Request(url, { method: incoming.method, headers: incoming.headers,
+      ...(!["GET","HEAD"].includes(incoming.method ?? "GET") ? { body: Buffer.concat(chunks) } : {}) });
+    const response = await worker.fetch(request, { DB: database.adapter });
+    outgoing.writeHead(response.status, Object.fromEntries(response.headers));
+    outgoing.end(Buffer.from(await response.arrayBuffer()));
+  } catch (error) { console.error(error); outgoing.writeHead(500).end("Falha no servidor local."); }
 });
-server.listen(4173, "127.0.0.1", () => console.log("Letra Rápida: http://127.0.0.1:4173"));
-server.on("error", error => { console.error(error.message); process.exitCode = 1; });
+server.listen(port, "127.0.0.1", () => console.log(`Letra Rápida: http://127.0.0.1:${port}`));
+server.on("error", error => { console.error(error.message); database.close(); process.exitCode = 1; });
